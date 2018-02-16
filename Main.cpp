@@ -411,12 +411,15 @@ void exibe( void )
 
     chao();
 
-    glm::mat4 posicao;
-    glm::mat4 posicao2;
-    posicao = glm::translate(posicao, glm::vec3(0.0,0.0,-30.0));
-    posicao2 = glm::translate(posicao2, glm::vec3(0.0,0.0,20.0));
-    carrossel(posicao);
-    flyzone(posicao2);
+    int qtdBrinquedos = 2;
+    glm::mat4 brinquedos[qtdBrinquedos];
+    glm::vec3 posBrinquedos[qtdBrinquedos] = {glm::vec3(0.0,0.0,-30.0), glm::vec3(0.0,0.0,20.0)};
+
+    for (int i=0; i<qtdBrinquedos; i++) {
+        brinquedos[i] = glm::translate(brinquedos[i], posBrinquedos[i]);
+    }
+    carrossel(brinquedos[0]);
+    flyzone(brinquedos[1]);
 
     desenhaFonteDeLuz(light_position1, 0.5);
     desenhaFonteDeLuz(light_position2, 0.5);
@@ -440,27 +443,30 @@ void posicionaCamera(unsigned char tecla) {
    glm::vec3 center(0.0,0.0,0.0);
    glm::vec3 up(0.0,1.0,0.0);
    switch( tecla ) {
-     case 'd': // camera em posição default
+    case 'd': // camera em posição default
         eye = glm::vec3(0.0,20.0,50.0);
 	    break;
-     case 'p': // camera em posição pessoa
+    case 'p': // camera em posição pessoa
         eye = glm::vec3(0.0,5.0,40.0);
-      break;
-     case 'j': // camera gira para a esquerda
+        break;
+    case 'j': // camera gira para a esquerda
         angCam -= 1.5;
 	    break;
-     case 'l':  // camera gira para a direita
+    case 'l':  // camera gira para a direita
         angCam += 1.5;
 	    break;
-     case 'i': // camera sobe
+    case 'i': // camera sobe
         eye.y += 1.2;
 	    break;
-     case 'k':  // camera desce
+    case 'k':  // camera desce
         eye.y -= 1.2;
 	    break;
-      case 'z':
+    case 'b':
+        eye = glm::vec3(0.0,14.0,20.0);
+        break;
+     case 'z':
         posteOn = !posteOn;
-      break;
+        break;
    }
    // calcular posicao da camera no plano XZ
    float angCamRad = glm::radians(angCam);
