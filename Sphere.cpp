@@ -2,7 +2,8 @@
 #include <GL/glew.h>
 
 #include "Sphere.h"
-#include <math.h>  // M_PI
+#include "Angel_util.h"
+#include <cmath>  // M_PI
 
 #include <vector>
 #include <iostream>

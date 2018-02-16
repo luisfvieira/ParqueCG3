@@ -10,12 +10,13 @@
 #define __ANGEL_H__
 
 //----------------------------------------------------------------------------
-// 
+//
 // --- Include system headers ---
 //
 
 #include <cmath>
 #include <iostream>
+#include <cstdio>
 
 //  Define M_PI in the case it's not defined in the math header file
 #ifndef M_PI
@@ -31,14 +32,11 @@
 //     this this "include" directory.
 //
 
-#ifdef __APPLE__  // include Mac OS X verions of headers
-#  include <OpenGL/OpenGL.h>
-#  include <GLUT/glut.h>
-#else // non-Mac OS X operating systems
+
 #  include <GL/glew.h>
 #  include <GL/freeglut.h>
 #  include <GL/freeglut_ext.h>
-#endif  // __APPLE__
+
 
 // Define a helpful macro for handling offsets into buffer objects
 #define BUFFER_OFFSET( offset )   ((GLvoid*) (offset))
@@ -59,7 +57,7 @@ GLuint InitShader( const char* vertexShaderFile,
 //    DEBUG macro is defined.
 const GLfloat  DivideByZeroTolerance = GLfloat(1.0e-07);
 
-//  Degrees-to-radians constant 
+//  Degrees-to-radians constant
 const GLfloat  DegreesToRadians = M_PI / 180.0;
 
 }  // namespace Angel
