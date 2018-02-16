@@ -1,0 +1,64 @@
+# depslib dependency file v1.0
+1518794308 source:c:\users\vinicius\documents\github\parquecg3\bmploader.cpp
+	"BMPLoader.h"
+
+1518794308 c:\users\vinicius\documents\github\parquecg3\bmploader.h
+	<stdio.h>
+	<string>
+
+1518794308 source:c:\users\vinicius\documents\github\parquecg3\cilindro.cpp
+	"Angel_util.h"
+	<vector>
+	"Cilindro.h"
+
+1518814845 c:\users\vinicius\documents\github\parquecg3\angel_util.h
+	<cmath>
+	<iostream>
+	<cstdio>
+	<GL/glew.h>
+	<GL/freeglut.h>
+	<GL/freeglut_ext.h>
+
+1518794308 c:\users\vinicius\documents\github\parquecg3\cilindro.h
+	<vector>
+
+1518794308 source:c:\users\vinicius\documents\github\parquecg3\cone.cpp
+	"Angel_util.h"
+	<vector>
+	"Cone.h"
+
+1518794308 c:\users\vinicius\documents\github\parquecg3\cone.h
+	"glm/glm.hpp"
+
+1518794308 source:c:\users\vinicius\documents\github\parquecg3\cubo.cpp
+	<GL/glew.h>
+	"Angel_util.h"
+	"Cubo.h"
+
+1518794308 c:\users\vinicius\documents\github\parquecg3\cubo.h
+	"../include/glm/glm.hpp"
+
+1518794308 source:c:\users\vinicius\documents\github\parquecg3\initshader.cpp
+	"Angel_util.h"
+
+1518814204 source:c:\users\vinicius\documents\github\parquecg3\main.cpp
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"Angel_util.h"
+	"BMPLoader.h"
+	"Cilindro.h"
+	"Cubo.h"
+	"Cone.h"
+	"Sphere.h"
+
+1518794308 c:\users\vinicius\documents\github\parquecg3\sphere.h
+
+1518799624 source:c:\users\vinicius\documents\github\parquecg3\sphere.cpp
+	<GL/glew.h>
+	"Sphere.h"
+	"Angel_util.h"
+	<cmath>
+	<vector>
+	<iostream>
+
