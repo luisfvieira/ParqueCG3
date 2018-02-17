@@ -33,6 +33,12 @@ static float angBase3 = 3.14159f;
 bool posteOn = true;
 bool pressed1 = false, pressed2 = false;
 
+static glm::vec3 eye;
+glm::vec3 center;
+glm::vec3 up(0.0,1.0,0.0);
+
+unsigned char teclaCamera;
+
 Cubo cubo;
 Cilindro cilindro;
 Cone cone;
@@ -452,18 +458,18 @@ void exibe( void )
 void posicionaCamera(unsigned char tecla) {
     static float angCam = 0.0;  // giro da câmera em torno da origem
     float raioCam = 50.0; // raio da circunferência do movimento da câmera
-    static glm::vec3 eye;
-    glm::vec3 center(0.0,0.0,0.0);
-    glm::vec3 up(0.0,1.0,0.0);
     switch( tecla ) {
         case 'd': // camera em posição default
+            center = glm::vec3(0.0,0.0,0.0);
             eye = glm::vec3(0.0,20.0,50.0);
             break;
         case 'p': // camera em posição pessoa
+            center = glm::vec3(0.0,0.0,0.0);
             eye = glm::vec3(0.0,5.0,40.0);
             break;
         case 'j': // camera gira para a esquerda
         case 'l':  // camera gira para a direita
+            center = glm::vec3(0.0,0.0,0.0);
             if (tecla == 'j')
                 angCam -= 1.5;
             else
@@ -472,29 +478,23 @@ void posicionaCamera(unsigned char tecla) {
             eye.z = cos(glm::radians(angCam)) * raioCam;
             break;
         case 'i': // camera sobe
+            center = glm::vec3(0.0,0.0,0.0);
             eye.y += 1.2;
             break;
         case 'k':  // camera desce
             eye.y -= 1.2;
             break;
         case 'b':
-            //eye.z += 20;
-            eye = glm::vec3(0.0f, 4.5f, 20.0f);
-            //eye = glm::translate(eye, glm::vec3(0.0,14.0,20.0));
-            eye = glm::rotate(eye, angBase3, glm::vec3(0.0f,0.0f,1.0f));
-            eye = glm::rotate(eye, 2*angBase3 , glm::vec3(0.0f, 1.0f, 0.0f));
-            //eye = glm::translate(eye, glm::vec3(0.0, 10.5, 0.0));
-            eye.y += 10.5f;
-            eye.x *= 4.5f; eye.x *= 0.2f; eye.z = 0.7f;
-            //center = glm::vec3();
+            eye = glm::vec3(-4.0f*sin(angBase3), 9.0f+cos(angBase3), 20.0f*cos(angBase3));
+            center = glm::vec3(1.0f*sin(angBase3), 7.5f+cos(angBase3), 20.0f*cos(angBase3));
             break;
-        case '1':
+        case '1':   //  camera placa ou carrossel
             eye = glm::vec3(-20.0f, 8.0f, -30.0f);
             if (!pressed2)  center = glm::vec3(-30.0f, 10.0f, -30.0f);
             else    center = glm::vec3(0.0, 10.0f, -30.0f);
             pressed2 = !pressed2;
             break;
-        case '2':
+        case '2':   //  camera placa ou flyzone
             eye = glm::vec3(-20.0f, 8.0f, 20.0f);
             if (!pressed1)  center = glm::vec3(-30.0f, 10.0f, 20.0f);
             else    center = glm::vec3(0.0, 10.0f, 20.0f);
@@ -513,8 +513,10 @@ void teclado( unsigned char tecla, int x, int y )
 {
     if (tecla==033)   // Escape Key
 	    exit( EXIT_SUCCESS );
-    else
-        posicionaCamera(tecla);
+    else {
+        teclaCamera = tecla;
+        posicionaCamera(teclaCamera);
+    }
 }
 
 //----------------------------------------------------------------------------
