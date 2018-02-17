@@ -31,6 +31,7 @@ int giro = 0;
 int giro2 = 0;
 static float angBase3 = 3.14159f;
 bool posteOn = true;
+bool pressed1 = false, pressed2 = false;
 
 Cubo cubo;
 Cilindro cilindro;
@@ -485,9 +486,19 @@ void posicionaCamera(unsigned char tecla) {
             //eye = glm::translate(eye, glm::vec3(0.0, 10.5, 0.0));
             eye.y += 10.5f;
             eye.x *= 4.5f; eye.x *= 0.2f; eye.z = 0.7f;
-
-
-            center = glm::vec3();
+            //center = glm::vec3();
+            break;
+        case '1':
+            eye = glm::vec3(-20.0f, 8.0f, -30.0f);
+            if (!pressed2)  center = glm::vec3(-30.0f, 10.0f, -30.0f);
+            else    center = glm::vec3(0.0, 10.0f, -30.0f);
+            pressed2 = !pressed2;
+            break;
+        case '2':
+            eye = glm::vec3(-20.0f, 8.0f, 20.0f);
+            if (!pressed1)  center = glm::vec3(-30.0f, 10.0f, 20.0f);
+            else    center = glm::vec3(0.0, 10.0f, 20.0f);
+            pressed1 = !pressed1;
             break;
         case 'z':
             posteOn = !posteOn;
