@@ -7,6 +7,7 @@ CAMERA: NORMAL
 
 //glm: biblioteca matemática para OpenGL
 #include <glm/glm.hpp> //vec2, vec3, mat4, etc
+#include<glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 // arquivo com recursos auxiliares (do livro texto)
@@ -23,11 +24,12 @@ typedef glm::vec4  point4;
 
 GLuint Model, View, Projection, isLightSource, ligado, withTexture;
 GLuint program;
-GLuint textura_chao, grama, outdoor;
+GLuint textura_chao, grama, outdoor, texCarrossel, texFlyzone;
 
 int direction = 1;
 int giro = 0;
 int giro2 = 0;
+static float angBase3 = 3.14159f;
 bool posteOn = true;
 
 Cubo cubo;
@@ -79,29 +81,32 @@ void poste(glm::mat4 M) {
     cone.desenhar();
 }
 
-void placa(glm::mat4 M) {
+void placa(glm::mat4 M, GLuint texPlaca, float x, float y, float z) {
 
     float xHaste=0.5, yHaste=10.0, zHaste=0.5;
     float xPlaca=15.0, yPlaca=10.0, zPlaca=0.5;
 
-    M = glm::translate(M, glm::vec3(30.0, 0.0, 0.0));
+    M = glm::translate(M, glm::vec3(x, y, z));
     M = glm::rotate(M, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
+    //  Haste 1
     glm::mat4 matHaste1 = M;
-    matHaste1 = glm::translate(matHaste1, glm::vec3(5.0, yHaste/2, 0.0));
+    matHaste1 = glm::translate(matHaste1, glm::vec3(5.0, yHaste/2, -0.5));
     matHaste1 = glm::scale(matHaste1, glm::vec3(xHaste, yHaste, zHaste));
     glUniformMatrix4fv(Model,1,GL_FALSE, glm::value_ptr(matHaste1));
     cubo.desenhar();
 
+    //  Haste 2
     glm::mat4 matHaste2 = M;
-    matHaste2 = glm::translate(matHaste2, glm::vec3(-5.0, yHaste/2, 0.0));
+    matHaste2 = glm::translate(matHaste2, glm::vec3(-5.0, yHaste/2, -0.5));
     matHaste2 = glm::scale(matHaste2, glm::vec3(xHaste, yHaste, zHaste));
     glUniformMatrix4fv(Model,1,GL_FALSE, glm::value_ptr(matHaste2));
     cubo.desenhar();
 
+    //  Placa
     glm::mat4 matPlaca = M;
     glUniform1i(withTexture, true);
-    glBindTexture(GL_TEXTURE_2D, outdoor);
+    glBindTexture(GL_TEXTURE_2D, texPlaca);
     matPlaca = glm::translate(matPlaca, glm::vec3(0.0, yPlaca, 0.0));
     matPlaca = glm::scale(matPlaca, glm::vec3(xPlaca, yPlaca, zPlaca));
     glUniformMatrix4fv(Model,1,GL_FALSE, glm::value_ptr(matPlaca));
@@ -240,8 +245,7 @@ void chao()
 
 void flyzone(glm::mat4 posicao)
 {
-
-  static float angBase3 = 3.14159f;
+    //  Movimento
   if (direction == 1) angBase3 += 0.001f;
   else  angBase3 -= 0.001f;
   if (glm::radians(angBase3) > 0.085f || glm::radians(angBase3) < 0.025f){
@@ -428,53 +432,70 @@ void exibe( void )
     glm::mat4 matPoste;
     poste(matPoste);
 
+    // Placa Outdoor
     glm::mat4 matPlaca;
-    placa(matPlaca);
+    placa(matPlaca, outdoor, 30.0f, 0.0f, 0.0f);
 
+    //  Placa Carrossel
+    glm::mat4 matPlacaCarrossel;
+    placa(matPlacaCarrossel, texCarrossel, -30.0f, 0.0, -30.0);
+
+    //  Placa Flyzone
+    glm::mat4 matPlacaFlyzone;
+    placa(matPlacaFlyzone, texFlyzone, -30.0f, 0.0, 20.0);
     glutSwapBuffers();
 }
 
 //----------------------------------------------------------------------------
 
 void posicionaCamera(unsigned char tecla) {
-   static float angCam = 0.0;  // giro da câmera em torno da origem
-   float raioCam = 50.0; // raio da circunferência do movimento da câmera
-   static glm::vec3 eye;
-   glm::vec3 center(0.0,0.0,0.0);
-   glm::vec3 up(0.0,1.0,0.0);
-   switch( tecla ) {
-    case 'd': // camera em posição default
-        eye = glm::vec3(0.0,20.0,50.0);
-	    break;
-    case 'p': // camera em posição pessoa
-        eye = glm::vec3(0.0,5.0,40.0);
-        break;
-    case 'j': // camera gira para a esquerda
-        angCam -= 1.5;
-	    break;
-    case 'l':  // camera gira para a direita
-        angCam += 1.5;
-	    break;
-    case 'i': // camera sobe
-        eye.y += 1.2;
-	    break;
-    case 'k':  // camera desce
-        eye.y -= 1.2;
-	    break;
-    case 'b':
-        eye = glm::vec3(0.0,14.0,20.0);
-        break;
-     case 'z':
-        posteOn = !posteOn;
-        break;
-   }
-   // calcular posicao da camera no plano XZ
-   float angCamRad = glm::radians(angCam);
-   eye.x = sin(angCamRad)*raioCam;
-   eye.z = cos(angCamRad)*raioCam;
-   glm::mat4 matVis = glm::lookAt(eye, center, up);
-   glUniformMatrix4fv(View,1,GL_FALSE, glm::value_ptr(matVis));
-   glutPostRedisplay();
+    static float angCam = 0.0;  // giro da câmera em torno da origem
+    float raioCam = 50.0; // raio da circunferência do movimento da câmera
+    static glm::vec3 eye;
+    glm::vec3 center(0.0,0.0,0.0);
+    glm::vec3 up(0.0,1.0,0.0);
+    switch( tecla ) {
+        case 'd': // camera em posição default
+            eye = glm::vec3(0.0,20.0,50.0);
+            break;
+        case 'p': // camera em posição pessoa
+            eye = glm::vec3(0.0,5.0,40.0);
+            break;
+        case 'j': // camera gira para a esquerda
+        case 'l':  // camera gira para a direita
+            if (tecla == 'j')
+                angCam -= 1.5;
+            else
+                angCam += 1.5;
+            eye.x = sin(glm::radians(angCam)) * raioCam;
+            eye.z = cos(glm::radians(angCam)) * raioCam;
+            break;
+        case 'i': // camera sobe
+            eye.y += 1.2;
+            break;
+        case 'k':  // camera desce
+            eye.y -= 1.2;
+            break;
+        case 'b':
+            //eye.z += 20;
+            eye = glm::vec3(0.0f, 4.5f, 20.0f);
+            //eye = glm::translate(eye, glm::vec3(0.0,14.0,20.0));
+            eye = glm::rotate(eye, angBase3, glm::vec3(0.0f,0.0f,1.0f));
+            eye = glm::rotate(eye, 2*angBase3 , glm::vec3(0.0f, 1.0f, 0.0f));
+            //eye = glm::translate(eye, glm::vec3(0.0, 10.5, 0.0));
+            eye.y += 10.5f;
+            eye.x *= 4.5f; eye.x *= 0.2f; eye.z = 0.7f;
+
+
+            center = glm::vec3();
+            break;
+        case 'z':
+            posteOn = !posteOn;
+            break;
+    }
+    glm::mat4 matVis = glm::lookAt(eye, center, up);
+    glUniformMatrix4fv(View,1,GL_FALSE, glm::value_ptr(matVis));
+    glutPostRedisplay();
 }
 
 void teclado( unsigned char tecla, int x, int y )
@@ -586,6 +607,23 @@ void init()
    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,bmp3.width,bmp3.height,0,GL_RGB,GL_UNSIGNED_BYTE,bmp3.bytes);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
+
+   BMPClass bmp4;
+   BMPLoad("carrossel.bmp", bmp4);
+   glGenTextures(1, &texCarrossel);
+   glBindTexture(GL_TEXTURE_2D, texCarrossel); //<<<textura
+   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,bmp4.width,bmp4.height,0,GL_RGB,GL_UNSIGNED_BYTE,bmp4.bytes);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
+
+   BMPClass bmp5;
+   BMPLoad("flyzone.bmp", bmp5);
+   glGenTextures(1, &texFlyzone);
+   glBindTexture(GL_TEXTURE_2D, texFlyzone); //<<<textura
+   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,bmp5.width,bmp5.height,0,GL_RGB,GL_UNSIGNED_BYTE,bmp5.bytes);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  //ou GL_LINEAR  //<<<textura
+
 
    GLuint tex_loc; //<<<textura
    tex_loc = glGetUniformLocation(program, "texMap"); //<<<textura
